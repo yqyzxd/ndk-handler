@@ -2,7 +2,7 @@
 // Created by 史浩 on 2019-12-21.
 //
 #include "com_wind_ndk_handler_JHandler.h"
-#include "../cpp/HandlerController.h"
+#include "HandlerController.h"
 
 #ifdef __cplusplus
 extern "C" {

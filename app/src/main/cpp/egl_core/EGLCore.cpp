@@ -40,12 +40,13 @@ bool EGLCore::init(EGLContext shareContext) {
             EGL_SURFACE_TYPE,EGL_WINDOW_BIT,
             EGL_NONE
     };
-    //3. 设置display配置？
+    //3. 设置display配置？同时获取EGLConfig
     if(!eglChooseConfig(display,attrib_list,&config,1,&numConfigs)){
         return false;
     }
     EGLint context_attrib_list []= {EGL_CONTEXT_CLIENT_VERSION,2,
                                  EGL_NONE};
+    //创建EGLContext
     context=eglCreateContext(display,config,shareContext==NULL?EGL_NO_CONTEXT:shareContext,
                      context_attrib_list );
 
@@ -56,4 +57,53 @@ bool EGLCore::init(EGLContext shareContext) {
     if (!pfneglPresentationTimeANDROID) {
         LOGE("eglPresentationTimeANDROID is not available!");
     }
+}
+
+EGLSurface EGLCore::createWindowSurface(ANativeWindow *window) {
+    EGLSurface surface=NULL;
+    EGLint format;
+    //获取format
+    if (!eglGetConfigAttrib(display,config,EGL_NATIVE_VISUAL_ID,&format)){
+        release();
+        return surface;
+    }
+    //设置nativewind属性
+    ANativeWindow_setBuffersGeometry(window,0,0,format);
+    //EGLDisplay dpy, EGLConfig config, EGLNativeWindowType win, const EGLint *attrib_list
+    surface=eglCreateWindowSurface(display,config,window,0);
+    if(!surface){
+        //error
+    }
+    return surface;
+
+}
+
+EGLSurface EGLCore::createOffscreenSurface(int width, int height) {
+    EGLSurface  surface;
+    EGLint attrib_list[]={EGL_WIDTH,width,
+                          EGL_HEIGHT,height,
+                          EGL_NONE};
+    surface=eglCreatePbufferSurface(display,config,attrib_list);
+
+    return surface;
+}
+
+bool EGLCore::makeCurrent(EGLSurface eglSurface) {
+    return eglMakeCurrent(display,eglSurface,eglSurface,context);
+}
+void EGLCore::doneCurrent() {
+    eglMakeCurrent(display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);
+}
+bool EGLCore::swapBuffers(EGLSurface eglSurface) {
+    return eglSwapBuffers(display,eglSurface);
+}
+
+EGLConfig EGLCore::getConfig() {
+    return config;
+}
+EGLContext EGLCore::getContext() {
+    return context;
+}
+EGLDisplay EGLCore::getDisplay() {
+    return display;
 }

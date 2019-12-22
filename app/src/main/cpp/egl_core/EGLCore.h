@@ -5,6 +5,7 @@
 #ifndef NDK_HANDLER_EGLCORE_H
 #define NDK_HANDLER_EGLCORE_H
 
+#include <android/native_window.h>
 
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLPRESENTATIONTIMEANDROIDPROC)(EGLDisplay display, EGLSurface surface, khronos_stime_nanoseconds_t time);
 

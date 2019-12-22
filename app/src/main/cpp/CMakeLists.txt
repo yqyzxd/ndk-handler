@@ -7,7 +7,7 @@ file(GLOB egl_core_files egl_core/*.cpp)
 add_library(
         native-handler
         SHARED
-         ../jni/com_wind_ndk_handler_JHandler.cpp
+        com_wind_ndk_handler_JHandler.cpp
         ${message_queue_files}
         ${egl_core_files}
         HandlerController.cpp
